@@ -7,8 +7,10 @@ import { useEffect } from "react";
 import { useState} from "react";
 import { useHistory } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
-import ActionBar from "./ActionBar";
-import { TweetContext } from "./TweetContex";
+import Likes from "./Likes";
+import { FiRepeat } from "react-icons/fi";
+import moment from "moment";
+
 
 // import handleAfterPublishTweet from "./handleAfterPublishTweet";
 // import moment from "moment";
@@ -16,7 +18,6 @@ import { TweetContext } from "./TweetContex";
 const HomeFeed = (props) => {
     const [currentTweets, setCurrentTweets] = React.useState(null);
     const [status, setStatus] = React.useState("loading");
-
     const [updateFeed, setUpdateFeed]= useState("")
     const [count, setCount] = useState('280');
     let vcolor="gray"
@@ -26,11 +27,8 @@ const HomeFeed = (props) => {
     if (count < 0){
         vcolor= "red"
     }
+    const history = useHistory();
 
-    // const {
-    //     isLikedByCurrentUser,
-    //     isRetweetedByCurrentUser,
-    //   } = useContext(TweetContext);
 
 useEffect(() => {
     fetch ('/api/me/home-feed')
@@ -40,140 +38,125 @@ useEffect(() => {
         setCurrentTweets(data)
         setStatus("idle")
     })
+    .catch(()=> history.push("/error")) 
 },[updateFeed])
 
 const [fname, setFname] = useState("")    
 const handleChange = e => {
     setFname(e.target.value)
     setCount("280"-e.target.value.length)
-  }
+}
 
 
 const PostTweet = () => {
     fetch('/api/tweet', {
-        
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({status : fname})}) //???
+        body: JSON.stringify({status : fname})})
         .then(res => res.json())
         .then(data => {
         setUpdateFeed(data)
         setFname("")
         setCount("280")
-
         })
+        .catch(()=> history.push("/error")) 
     }
-
-
-// const shoot = () => {
-//     setCont(cont => currentUser.profile.displayName + fname + cont);  
-//     setFname("")   
-// }
-
-// let history = useHistory();
-// function handleClick() {
-//     ev.stopPropagation().history.push("/home");
-//   }
-
 
     const {
         currentUser,
         //  status,
     } = useContext(CurrentUserContext);
-    if (!currentUser || !currentTweets)
+    if (!currentUser || !currentTweets 
+        )
     return <CircularProgress/>
 
     return (<div>
-
         <Text>Home</Text>
         <Div>
         <Img src={currentUser.profile.avatarSrc} alt={currentUser.profile.handle}></Img>
-    
         <label>
             {" "}
-            <textarea type="text" value={fname} onChange={handleChange} />
+            <TextArea type="text" placeholder="What's happening?" value={fname} onChange={handleChange} />
         </label>
         <Counter style={{color: vcolor}}>{count}</Counter>
         <Button onClick={PostTweet}>Meow</Button>
-        <div>
-        </div>
         </Div>
-
-        {/* ev.stopPropagation();
-
-
-
-  let history = useHistory();
-
-  function handleClick() {
-    history.push("/home");
-  }
-
-  return (
-    <button type="button" onClick={handleClick}>
-      Go home
-    </button>
-  );
-}
- */}
-
-{currentTweets.tweetIds.map(id => {
-    return <div> 
-        <StyledLink to={`/tweet/${id}`}>
-        <div >
-        <StyledLink to={`/profile/${currentTweets.tweetsById[id].author.handle}`}>
-        <Img src={currentTweets.tweetsById[id].author.avatarSrc} ></Img>
-        <p>{currentTweets.tweetsById[id].author.displayName}</p>
-        <p>@{currentTweets.tweetsById[id].author.handle} {currentTweets.tweetsById[id].author.joined}</p>
-        </StyledLink>
-        </div>
-        <p>{currentTweets.tweetsById[id].status}</p>
-        {currentTweets.tweetsById[id].media.length>0 && <Img2 src={currentTweets.tweetsById[id].media[0]?.url} alt="img"></Img2>}
-        {/* <ActionBar
-        isRetweetedByCurrentUser={isRetweetedByCurrentUser}
-        isLikedByCurrentUser={isLikedByCurrentUser}
-      /> */}
-        
-        {/* {currentTweets.tweetsById[id].retweetFrom.handle} */}
-
-        {/* {moment().format('- MMMM Do')} */}   
-        {/* {currentTweets.tweetsById[id].status} */}
-        {/* <Tweet /> --> currentTweets.tweetsById[id] */}
-        </StyledLink>
-            </div>
-})}
-        </div>);
-    // console.log(currentUser)
-    
+        {currentTweets.tweetIds.map(id => {
+            function handleClickWB(ev) {
+                ev.stopPropagation()
+                history.push(`/tweet/${id}`);
+            }
+            function handleClickTC(ev) {
+                ev.stopPropagation()
+                history.push(`/profile/${currentTweets.tweetsById[id].author.handle}`);
+            }
+            return <DivWholeBox><WholeBox onClick={handleClickWB}>
+                <GrayS>{currentTweets.tweetsById[id].retweetFrom && <p><SpanSt><FiRepeat /></SpanSt>{currentTweets.tweetsById[id].retweetFrom.displayName} Retweeted</p>}</GrayS>
+                <TweetCharact onClick={handleClickTC}>
+                <DivF>
+                <Img src={currentTweets.tweetsById[id].author.avatarSrc} />
+                <BoldS>{currentTweets.tweetsById[id].author.displayName}</BoldS>
+                <GrayS2>@{currentTweets.tweetsById[id].author.handle} {moment(currentTweets.tweetsById[id].author.joined).format(' MMM Do ')}</GrayS2>
+                </DivF>
+                <Pstyle>{currentTweets.tweetsById[id].status}</Pstyle>
+                </TweetCharact> 
+                {currentTweets.tweetsById[id].media.length>0 && <Img2 src={currentTweets.tweetsById[id].media[0]?.url} alt="img"/>}
+                </WholeBox>
+                <Likes/>
+                {/* <ActionBar/> */}
+               </DivWholeBox> 
+        })}
+    </div>);
 };
+  
+
+
+
 const Text = styled.p`
 font-size: 40px;
 font-weight:bold;
 font-family: Poppins, sans-serif;
+border:1px solid lightgray;
+width:670px;
+height:50px;
+margin-bottom:0;
+padding:25px;
+`;
+const SpanSt= styled.span`
+font-size:20px;
+padding:5px;
 `;
 
 const Img = styled.img`
 border-radius:50%;
-width:100px;
+width:80px;
+margin-right:30px;
+
 `;
 
 const Img2 = styled.img`
 border-radius:10px;
 width:600px;
+margin-left:100px;
 `;
 
 const Div = styled.div`
-height:380px;
+height:300px;
 width:700px;
 padding: 10px;
 border:1px solid lightgray;
-
+`;
+const TextArea = styled.textarea`
+font-size:20px;
+border:none;
+font-family: Poppins, sans-serif;
+margin-left:50px;
 `;
 
 const Button = styled.div`
 display:block;
 margin-Left: 580px;
-margin-top:0;
+margin-top:-50px;
 font-size: 24px;
 font-family: Poppins, sans-serif;
 font-weight:bold;
@@ -189,16 +172,44 @@ border-radius:30px;
 }
 `;
 
-const StyledLink  = styled(Link)`
-
-text-decoration: none;
-color: black;
-
-`;
   
 const Counter = styled.p`
 margin-Left: 500px;
 margin-top:140px;
+`;
+const GrayS = styled.p`
+color:gray;
+margin-left:50px;
+`;
+const GrayS2 = styled.p`
+color:gray;
+margin-left:2px;
+`;
+const BoldS = styled.p`
+font-weight:bold;
+`;
+
+
+const TweetCharact = styled.div`
+/* border:4px solid red; */
+`;
+
+const DivF = styled.div`
+margin-left:20px;
+display:flex;
+`;
+
+const Pstyle = styled.p`
+margin-left:130px;
+margin-top:-30px;
+`;
+
+const WholeBox = styled.div`
+width:720px;
+`;
+const DivWholeBox = styled.div`
+border:1px solid lightgray;
+width:720px;
 `;
 
 

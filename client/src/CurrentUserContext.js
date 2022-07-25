@@ -3,6 +3,7 @@ import { createContext,useState } from "react";
 // import moment from "moment";
 import React from 'react';
 import { useEffect } from "react";
+import { useHistory } from "react-router-dom";
 
 
 
@@ -12,7 +13,7 @@ export const CurrentUserProvider = ({ children }) => {
 
     const [currentUser, setCurrentUser] = React.useState(null);
     const [status, setStatus] = React.useState("loading");
-
+    const history = useHistory();
   // Fetch the user data from the API (/api/me/profile)
 useEffect(() => {
     fetch ('/api/me/profile')
@@ -22,14 +23,17 @@ useEffect(() => {
         setCurrentUser(data)
         setStatus("idle")
     })
-
+    .catch(()=> history.push("/error")) 
 },[])
   // When the data is received, update currentUser.
   // Also, set `status` to `idle`
 
 
     return (
-        <CurrentUserContext.Provider value={{ currentUser, status }}>
+        <CurrentUserContext.Provider value={{ 
+          currentUser,
+          status 
+          }}>
         {children}
       </CurrentUserContext.Provider>
     )

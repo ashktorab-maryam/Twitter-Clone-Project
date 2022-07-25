@@ -2,12 +2,13 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import React from "react";
 import Sidebar from "./Sidebar";
 import HomeFeed from "./HomeFeed";
-import Profile from "./Profile";
+// import Profile from "./Profile";
 import Notifications from "./Notifications";
 import styled from "styled-components";
 import Bookmarks from "./Bookmarks";
 import TweetDetails from "./TweetDetails";
 import ProfileDetails from "./ProfileDetails";
+import ErrorScreen from "./ErrorScreen";
 // import AddTripButton from "./AddTripButton";
 
 // import CurrentUserProvider from "./CurrentUserContext";
@@ -30,6 +31,7 @@ const App = (props) => {
             <Route exact path="/tweet/:tweetId"> <Style><TweetDetails/></Style></Route>
             {/* <Route exact path="/profile/me"> <Style><Profile/></Style></Route> */}
             <Route exact path="/profile/:profileId"> <Style><ProfileDetails/></Style></Route>
+            <Route exact path="/error"><Style><ErrorScreen/></Style></Route>
             {/* <Route path="/items/:itemId"><ItemDetails/></Route> */}
 
             </>

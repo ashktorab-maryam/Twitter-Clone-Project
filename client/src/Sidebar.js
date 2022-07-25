@@ -13,7 +13,7 @@ const Sidebar = (props) => {
           <Logo/>
    
     <p><StyledLink to="/"><FiHome/>  Home</StyledLink></p>
-    <p><StyledLink to="/profile/me"><FiUser/>  Profile</StyledLink></p>
+    <p><StyledLink to="/profile/me" exact={true} ><FiUser/>  Profile</StyledLink></p>
     <p><StyledLink to="/notifications"><FiBell/> Notifications</StyledLink></p>
     <p><StyledLink to="/bookmarks"><FiBookmark/> Bookmarks</StyledLink></p>
 
