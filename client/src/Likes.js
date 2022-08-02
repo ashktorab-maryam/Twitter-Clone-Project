@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from "styled-components";
 import { FiHeart } from "react-icons/fi";
 import { FiMessageCircle } from "react-icons/fi";
@@ -6,58 +6,83 @@ import { FiShare } from "react-icons/fi";
 import { FiRepeat } from "react-icons/fi";
 import Action from "./Action";
 
-class Likes extends React.Component {
+const Likes = ({tweet, onLiked, onRetweet})=>{
 
-constructor(props){
-
-    super(props);
-    this.state ={
-        likes: 0,
-        updated: false
-    }
-    this.updateLikes = this.updateLikes.bind(this);
-}
+    const {
+        isLiked,
+        numLikes,
+        numRetweets,
+        isRetweeted} = tweet;
 
 
-updateLikes() {
 
-    if(!this.state.updated) {
-        this.setState((prevState, props) => {
-            return {
-            likes: prevState.likes + 1,
-            updated: true
-        };
-        });
-    } else {
-    this.setState((prevState, props) => {
-        return {
-        likes: prevState.likes - 1,
-        updated: false
-        }; 
-    });
+    const handleLike = (e) => {
+        e.preventDefault();
+        onLiked(!isLiked)
+        
+      };
+    
+      const handleRetweet = (e) => {
+        e.preventDefault();
+        onRetweet(!isRetweeted)
+      };
+// class Likes extends React.Component {
 
-    }
-}
+// constructor(props){
 
-render(){
+//     super(props);
+//     this.state ={
+//         likes: 0,
+//         updated: false
+//     }
+//     this.updateLikes = this.updateLikes.bind(this);
+// }
+
+
+// updateLikes() {
+
+//     if(!this.state.updated) {
+//         this.setState((prevState, props) => {
+//             return {
+//             likes: prevState.likes + 1,
+//             updated: true
+//         };
+//         });
+//     } else {
+//     this.setState((prevState, props) => {
+//         return {
+//         likes: prevState.likes - 1,
+//         updated: false
+//         }; 
+//     });
+
+//     }
+// }
+
+// render(){
 
     return(
     <Wrapper>
     <Action color="rgb(27, 149, 224)" size={50}>
         <SpanSt><FiMessageCircle /></SpanSt>
     </Action>
-    <Count><Action 
+    <Count onClick={(e) => {
+                handleRetweet(e);
+              }}>
+        <Action 
         color="rgb(23, 191, 99)" 
         size={50}>
-        <SpanSt><FiRepeat /></SpanSt>
-    </Action>
-        </Count><span></span>
-        <Count onClick={this.updateLikes}><Action 
+        <SpanSt><FiRepeat  /></SpanSt>
+        </Action>
+        </Count>{numRetweets}
+        <Count onClick={(e) => {
+                handleLike(e);
+              }}><Action 
         color="rgb(224, 36, 94)" 
         size={50}>
         <SpanSt><FiHeart /></SpanSt>
     </Action>
-        </Count>{this.state.likes}
+        </Count>{numLikes}
     <Action color="rgb(27, 149, 224)" size={50}>
         <SpanSt><FiShare/></SpanSt>
     </Action>
@@ -66,7 +91,7 @@ render(){
 }
 
 
-}
+// }
 const Div = styled.div`
 display:flex;
 `;

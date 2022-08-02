@@ -39,7 +39,18 @@ return<CircularProgress/>
         <Pstyle>{currentTweets.tweet.status}</Pstyle>  
         {currentTweets.tweet.media.length>0 && <Img2 src={currentTweets.tweet.media[0]?.url} alt="img"></Img2>}
         <Pstyle>{moment(currentTweets.tweet.timestamp).format('LT - MMM D  YYYY')}. Critter web app</Pstyle> 
-        <Likes/>
+        <Likes tweet= {currentTweets.tweet} onLiked= {(isliked)=>{
+                    console.log(isliked);
+                    currentTweets.tweet.numLikes+= isliked? 1 : -1
+                    currentTweets.tweet.isLiked=isliked
+                    setCurrentTweets({...currentTweets})
+                }} 
+                onRetweet= {(isRetweeted)=>{
+                    console.log(isRetweeted);
+                    currentTweets.tweet.numRetweets+= isRetweeted? 1 : -1
+                    currentTweets.tweet.isRetweeted=isRetweeted
+                    setCurrentTweets({...currentTweets})
+                }}/>
         </DivWholeBox>
         </>;
 };

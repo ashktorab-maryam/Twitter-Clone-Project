@@ -27,13 +27,15 @@ useEffect(() => {
     .then (data => {
         console.log(data)
         setCurrentProfiles(data)
+        getTweetFeed(data.profile.handle)
         setStatus("idle")
+
     })
     .catch(()=> history.push("/error")) 
 },[])
 
-useEffect(() => {
-    fetch (`/api/${profileId}/feed`)
+const getTweetFeed= (handler)=>{
+    fetch (`/api/${handler}/feed`)
     .then (res => res.json())
     .then (data => {
         console.log(data)
@@ -41,8 +43,7 @@ useEffect(() => {
         setStatus("idle")
     })
     .catch(()=> history.push("/error")) 
-},[updateFeed])
-
+} 
 
 
 
@@ -76,7 +77,18 @@ return<CircularProgress/>
             </DivF>
             <Pstyle>{currentTweets.tweetsById[id].status}</Pstyle>
             <p> {currentTweets.tweetsById[id].media.length>0 && <Img2 src={currentTweets.tweetsById[id].media[0]?.url} alt="img"/>}</p>
-            <Likes/>
+            <Likes tweet= {currentTweets.tweetsById[id]} onLiked= {(isliked)=>{
+                    console.log(isliked);
+                    currentTweets.tweetsById[id].numLikes+= isliked? 1 : -1
+                    currentTweets.tweetsById[id].isLiked=isliked
+                    setCurrentTweets({...currentTweets})
+                }} 
+                onRetweet= {(isRetweeted)=>{
+                    console.log(isRetweeted);
+                    currentTweets.tweetsById[id].numRetweets+= isRetweeted? 1 : -1
+                    currentTweets.tweetsById[id].isRetweeted=isRetweeted
+                    setCurrentTweets({...currentTweets})
+                }}/>
             </DivWholeBox>
         </>
 

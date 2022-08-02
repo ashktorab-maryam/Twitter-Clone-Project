@@ -19,7 +19,7 @@ const HomeFeed = (props) => {
     const [currentTweets, setCurrentTweets] = React.useState(null);
     const [status, setStatus] = React.useState("loading");
     const [updateFeed, setUpdateFeed]= useState("")
-    const [count, setCount] = useState('280');
+    const [count, setCount] = useState(280);
     let vcolor="gray"
     if (count < 55){
         vcolor= "orange"
@@ -42,9 +42,9 @@ useEffect(() => {
 },[updateFeed])
 
 const [fname, setFname] = useState("")    
-const handleChange = e => {
+const handleChange = (e) => {
     setFname(e.target.value)
-    setCount("280"-e.target.value.length)
+    setCount(280 - e.target.value.length)
 }
 
 
@@ -57,7 +57,7 @@ const PostTweet = () => {
         .then(data => {
         setUpdateFeed(data)
         setFname("")
-        setCount("280")
+        setCount(280)
         })
         .catch(()=> history.push("/error")) 
     }
@@ -76,10 +76,10 @@ const PostTweet = () => {
         <Img src={currentUser.profile.avatarSrc} alt={currentUser.profile.handle}></Img>
         <label>
             {" "}
-            <TextArea type="text" placeholder="What's happening?" value={fname} onChange={handleChange} />
+            <TextArea type="text" placeholder="What's happening?" value={fname} onChange={(e)=>handleChange(e)} />
         </label>
         <Counter style={{color: vcolor}}>{count}</Counter>
-        <Button onClick={PostTweet}>Meow</Button>
+        <Button onClick={PostTweet} disabled= {count===280 || count<0}>Meow</Button>
         </Div>
         {currentTweets.tweetIds.map(id => {
             function handleClickWB(ev) {
@@ -102,7 +102,19 @@ const PostTweet = () => {
                 </TweetCharact> 
                 {currentTweets.tweetsById[id].media.length>0 && <Img2 src={currentTweets.tweetsById[id].media[0]?.url} alt="img"/>}
                 </WholeBox>
-                <Likes/>
+                <Likes tweet= {currentTweets.tweetsById[id]} onLiked= {(isliked)=>{
+                    console.log(isliked);
+                    currentTweets.tweetsById[id].numLikes+= isliked? 1 : -1
+                    currentTweets.tweetsById[id].isLiked=isliked
+                    setCurrentTweets({...currentTweets})
+                }} 
+                onRetweet= {(isRetweeted)=>{
+                    console.log(isRetweeted);
+                    currentTweets.tweetsById[id].numRetweets+= isRetweeted? 1 : -1
+                    currentTweets.tweetsById[id].isRetweeted=isRetweeted
+                    setCurrentTweets({...currentTweets})
+                }}
+                />
                 {/* <ActionBar/> */}
                </DivWholeBox> 
         })}
@@ -153,11 +165,11 @@ font-family: Poppins, sans-serif;
 margin-left:50px;
 `;
 
-const Button = styled.div`
+const Button = styled.button`
 display:block;
 margin-Left: 580px;
 margin-top:-50px;
-font-size: 24px;
+font-size: 15px;
 font-family: Poppins, sans-serif;
 font-weight:bold;
 color:white;
@@ -166,10 +178,16 @@ background-color: blueviolet;
 cursor: pointer;
 width:70px;
 border-radius: 30px;
-:hover {
+border:none;
+&:disabled {
+    background-color: gray;
+    border:none;
+  }
+/* :hover {
 background-color: #CBC3E3;
 border-radius:30px;
-}
+} */
+
 `;
 
   
